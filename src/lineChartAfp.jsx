@@ -7,6 +7,7 @@ ChartJS.register(...registerables);
 export default function LineCHartAfp() {
   const [cuprumData, setCuprumData] = useState([]);
   const [capitalData, setCapitalData] = useState([]);
+  const [modeloData, setModeloData] = useState([]);
 
   const fetchCuprumData = async () => {
     try {
@@ -31,9 +32,22 @@ export default function LineCHartAfp() {
     }
   };
 
+  const fetchModeloData = async () => {
+    try {
+      const response = await fetch(
+        "https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=MODELO&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=01%2F05%2F2024&fechaFinal=02%2F05%2F2024"
+      );
+      const data = await response.json();
+      setModeloData(data);
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+    }
+  };
+
   useEffect(() => {
     fetchCuprumData();
     fetchCapitalData();
+    fetchModeloData();
   }, []);
 
   const options = {
@@ -74,6 +88,14 @@ export default function LineCHartAfp() {
         fill: false,
         borderColor: "rgb(255, 163, 163)",
         backgroundColor: "rgb(255, 0, 0)",
+      },
+      {
+        label: "Modelo",
+        data: modeloData.map((item) => item.valor),
+        tension: 0.5,
+        fill: false,
+        borderColor: "rgb(3, 112, 12)",
+        backgroundColor: "rgb(0, 0, 0))",
       },
     ],
   };
