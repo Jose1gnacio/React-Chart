@@ -5,49 +5,44 @@ import { registerables } from "chart.js";
 ChartJS.register(...registerables);
 
 export default function LineCHartAfp() {
-  const [cuprumData, setCuprumData] = useState([]);
-  const [capitalData, setCapitalData] = useState([]);
-  const [modeloData, setModeloData] = useState([]);
+  const fechaActual = new Date();
+  const [datos, setDatos] = useState([]);
+  const [datosCapital, setDatosCapital] = useState([]);
+  const [datosCuprum, setDatosCuprum] = useState([]);
+  const [datosHabitat, setDatosHabitat] = useState([]);
+  const [datosModelo, setDatosModelo] = useState([]);
+  const [datosPlanVital, setDatosPlanVital] = useState([]);
+  const [datosProVida, setDatosProVida] = useState([]);
+  const [datosUno, setDatosUno] = useState([]);
 
-  const fetchCuprumData = async () => {
-    try {
-      const response = await fetch(
-        "https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=CUPRUM&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=01%2F05%2F2024&fechaFinal=02%2F05%2F2024"
-      );
-      const data = await response.json();
-      setCuprumData(data);
-    } catch (error) {
-      console.error("Error al obtener datos:", error);
-    }
-  };
-  const fetchCapitalData = async () => {
-    try {
-      const response = await fetch(
-        "https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=CAPITAL&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=01%2F05%2F2024&fechaFinal=02%2F05%2F2024"
-      );
-      const data = await response.json();
-      setCapitalData(data);
-    } catch (error) {
-      console.error("Error al obtener datos:", error);
-    }
-  };
+  const dia = fechaActual.getDate();
+  const mes = fechaActual.getMonth() + 1;
+  const año = fechaActual.getFullYear();
 
-  const fetchModeloData = async () => {
+  console.log(`Hoy es ${dia}/${mes}/${año}`);
+
+  const fetchData = async () => {
     try {
       const response = await fetch(
-        "https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=MODELO&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=01%2F05%2F2024&fechaFinal=02%2F05%2F2024"
+        `https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=CAPITAL%2CCUPRUM%2CMODELO&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=01%2F01%2F2024&fechaFinal=${dia}%2F${mes}%2F${año}`
       );
       const data = await response.json();
-      setModeloData(data);
+      setDatos(data);
+      setDatosCapital(data.filter((dato) => dato.afp === "CAPITAL"));
+      setDatosCuprum(data.filter((dato) => dato.afp === "CUPRUM"));
+      setDatosHabitat(data.filter((dato) => dato.afp === "HABITAT"));
+      setDatosModelo(data.filter((dato) => dato.afp === "MODELO"));
+      setDatosPlanVital(data.filter((dato) => dato.afp === "PLANVITAL"));
+      setDatosProVida(data.filter((dato) => dato.afp === "PROVIDA"));
+      setDatosUno(data.filter((dato) => dato.afp === "UNO"));
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
   };
+  console.log(datosCapital);
 
   useEffect(() => {
-    fetchCuprumData();
-    fetchCapitalData();
-    fetchModeloData();
+    fetchData();
   }, []);
 
   const options = {
@@ -71,28 +66,34 @@ export default function LineCHartAfp() {
   };
 
   const data = {
-    labels: ["A", "B", "C", "D", "E"],
+    labels: datos.map((item) => item.fecha),
     datasets: [
       {
         label: "Cuprum",
-        data: cuprumData.map((item) => item.valor),
-        tension: 0.5,
+        data: datosCuprum
+          .filter((item) => item.fondo === "A")
+          .map((item) => item.valor),
+        tension: 0.1,
         fill: false,
         borderColor: "rgb(119, 107, 255)",
         backgroundColor: "rgb(21, 0, 255)",
       },
       {
         label: "Capital",
-        data: capitalData.map((item) => item.valor),
-        tension: 0.5,
+        data: datosCapital
+          .filter((item) => item.fondo === "A")
+          .map((item) => item.valor),
+        tension: 0.1,
         fill: false,
         borderColor: "rgb(255, 163, 163)",
         backgroundColor: "rgb(255, 0, 0)",
       },
       {
         label: "Modelo",
-        data: modeloData.map((item) => item.valor),
-        tension: 0.5,
+        data: datosModelo
+          .filter((item) => item.fondo === "A")
+          .map((item) => item.valor),
+        tension: 0.1,
         fill: false,
         borderColor: "rgb(3, 112, 12)",
         backgroundColor: "rgb(0, 0, 0))",
