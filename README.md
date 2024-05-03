@@ -1,6 +1,6 @@
 # React-Chart
 
-Breve descripción del proyecto.
+Ejemplo de como aplicar graficos en React.
 
 ## Instalación
 
