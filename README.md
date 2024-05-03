@@ -84,4 +84,3 @@ Este es solo un ejemplo simple. Puedes encontrar más información sobre cómo p
 ## Contribuciones
 
 Las contribuciones son bienvenidas. Si tienes sugerencias, mejoras o encuentras algún problema, por favor abre un issue o envía un pull request.
->>>>>>> 059c595b8c68867175afdddb056cc5217f4d3be4
