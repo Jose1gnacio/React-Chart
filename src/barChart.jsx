@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import ChartJS from "chart.js/auto";
 import { registerables } from "chart.js";
 ChartJS.register(...registerables);
@@ -40,20 +40,22 @@ export default function BarChart() {
       {
         label: "Compra",
         data: dolarData.map((item) => item.compra),
-        tension: 0.5,
-        fill: true,
+        tension: 0.5, //lineas suaves
+        fill: false,
         borderColor: "rgb(0, 255, 21)",
         backgroundColor: "rgb(0, 147, 12)",
+        pointRadius: 0,
       },
       {
         label: "Venta",
         data: dolarData.map((item) => item.venta),
         tension: 0.5,
-        fill: true,
+        fill: false,
         borderColor: "rgb(237, 92, 92)",
         backgroundColor: "rgb(170, 75, 75)",
+        pointRadius: 0,
       },
     ],
   };
-  return <Bar data={data} options={options} />;
+  return <Line data={data} options={options} />;
 }

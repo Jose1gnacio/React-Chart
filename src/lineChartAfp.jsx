@@ -7,43 +7,152 @@ ChartJS.register(...registerables);
 export default function LineCHartAfp() {
   const fechaActual = new Date();
   const [datos, setDatos] = useState([]);
-  const [datosCapital, setDatosCapital] = useState([]);
-  const [datosCuprum, setDatosCuprum] = useState([]);
-  const [datosHabitat, setDatosHabitat] = useState([]);
-  const [datosModelo, setDatosModelo] = useState([]);
-  const [datosPlanVital, setDatosPlanVital] = useState([]);
-  const [datosProVida, setDatosProVida] = useState([]);
-  const [datosUno, setDatosUno] = useState([]);
+  const [promedioValorPorDiaFondoA, setPromedioValorPorDiaFondoA] = useState(
+    {}
+  );
+  const [promedioValorPorDiaFondoB, setPromedioValorPorDiaFondoB] = useState(
+    {}
+  );
+  const [promedioValorPorDiaFondoC, setPromedioValorPorDiaFondoC] = useState(
+    {}
+  );
+  const [promedioValorPorDiaFondoD, setPromedioValorPorDiaFondoD] = useState(
+    {}
+  );
+  const [promedioValorPorDiaFondoE, setPromedioValorPorDiaFondoE] = useState(
+    {}
+  );
 
-  const dia = fechaActual.getDate();
-  const mes = fechaActual.getMonth() + 1;
-  const año = fechaActual.getFullYear();
+  const [fechaInicio, setFechaInicio] = useState(fechaActual);
+  const [fechaTermino, setFechaTermino] = useState(fechaActual);
 
-  console.log(`Hoy es ${dia}/${mes}/${año}`);
+  const diaInicial = fechaInicio.getDate();
+  const mesInicial = fechaInicio.getMonth() + 2;
+  const añoInicial = fechaInicio.getFullYear();
+
+  const diaFinal = fechaTermino.getDate();
+  const mesFinal = fechaTermino.getMonth() + 1;
+  const añoFinal = fechaTermino.getFullYear();
+
+  const handleFechaInicio = (e) => {
+    const selectedInicio = new Date(e.target.value);
+    setFechaInicio(selectedInicio);
+  };
+  console.log("Fecha de inicio " + fechaInicio);
+
+  const handleFechaTermino = (e) => {
+    const selectedTermino = new Date(e.target.value);
+    setFechaTermino(selectedTermino);
+  };
+  console.log(`La fecha de termino es: ${fechaTermino}`);
+
+  //console.log(`Hoy es ${dia}/${mes}/${año}`);
+
+  const generarRangoFechas = (fechaInicio, fechaTermino) => {
+    const rangoFechas = [];
+    const fechaInicial = new Date(fechaInicio);
+    const fechaFin = new Date(fechaTermino);
+
+    for (
+      let fecha = new Date(fechaInicial);
+      fecha <= fechaFin;
+      fecha.setDate(fecha.getDate() + 1)
+    ) {
+      rangoFechas.push(new Date(fecha));
+    }
+
+    return rangoFechas;
+  };
+
+  const rangoFechas = generarRangoFechas(
+    `${añoInicial}-${mesInicial - 1}-${diaInicial}`,
+    `${añoFinal}-${mesFinal}-${diaFinal}`
+  );
+  console.log("Estas son las fechas " + rangoFechas);
 
   const fetchData = async () => {
     try {
+      /* const options = {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET",
+        },
+        method: "GET",
+        redirect: "follow",
+        mode: "cors",
+        cache: "no-cache",
+      }; */
       const response = await fetch(
-        `https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=CAPITAL%2CCUPRUM%2CMODELO&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=01%2F01%2F2024&fechaFinal=${dia}%2F${mes}%2F${año}`
+        `https://www.quetalmiafp.cl/api/Cuota/ObtenerCuotas?listaAFPs=CAPITAL%2CCUPRUM%2CHABITAT%2CMODELO%2CPLANVITAL%2CPROVIDA%2CUNO&listaFondos=A%2CB%2CC%2CD%2CE&fechaInicial=${fechaInicio.getDate()}%2F${
+          fechaInicio.getMonth() + 1
+        }%2F${fechaInicio.getFullYear()}&fechaFinal=${fechaTermino.getDate()}%2F${
+          fechaTermino.getMonth() + 1
+        }%2F${fechaTermino.getFullYear()}` //,options
       );
       const data = await response.json();
       setDatos(data);
-      setDatosCapital(data.filter((dato) => dato.afp === "CAPITAL"));
-      setDatosCuprum(data.filter((dato) => dato.afp === "CUPRUM"));
-      setDatosHabitat(data.filter((dato) => dato.afp === "HABITAT"));
-      setDatosModelo(data.filter((dato) => dato.afp === "MODELO"));
-      setDatosPlanVital(data.filter((dato) => dato.afp === "PLANVITAL"));
-      setDatosProVida(data.filter((dato) => dato.afp === "PROVIDA"));
-      setDatosUno(data.filter((dato) => dato.afp === "UNO"));
+
+      // Calcular el promedio del "valor" por cada día
+      const promedioValorPorDiaFondoA = {};
+      const promedioValorPorDiaFondoB = {};
+      const promedioValorPorDiaFondoC = {};
+      const promedioValorPorDiaFondoD = {};
+      const promedioValorPorDiaFondoE = {};
+
+      data.forEach((item) => {
+        const { fecha, valor, fondo } = item;
+        let promedioValorPorDiaFondo;
+
+        switch (fondo) {
+          case "A":
+            promedioValorPorDiaFondo = promedioValorPorDiaFondoA;
+            break;
+          case "B":
+            promedioValorPorDiaFondo = promedioValorPorDiaFondoB;
+            break;
+          case "C":
+            promedioValorPorDiaFondo = promedioValorPorDiaFondoC;
+            break;
+          case "D":
+            promedioValorPorDiaFondo = promedioValorPorDiaFondoD;
+            break;
+          case "E":
+            promedioValorPorDiaFondo = promedioValorPorDiaFondoE;
+            break;
+          default:
+            break;
+        }
+
+        if (!promedioValorPorDiaFondo[fecha]) {
+          promedioValorPorDiaFondo[fecha] = {
+            suma: 0,
+            count: 0,
+            promedio: 0,
+          };
+        }
+        promedioValorPorDiaFondo[fecha].suma += valor;
+        promedioValorPorDiaFondo[fecha].count++;
+        promedioValorPorDiaFondo[fecha].promedio =
+          promedioValorPorDiaFondo[fecha].suma /
+          promedioValorPorDiaFondo[fecha].count;
+      });
+
+      setPromedioValorPorDiaFondoA(promedioValorPorDiaFondoA);
+      setPromedioValorPorDiaFondoB(promedioValorPorDiaFondoB);
+      setPromedioValorPorDiaFondoC(promedioValorPorDiaFondoC);
+      setPromedioValorPorDiaFondoD(promedioValorPorDiaFondoD);
+      setPromedioValorPorDiaFondoE(promedioValorPorDiaFondoE);
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
   };
-  console.log(datosCapital);
 
   useEffect(() => {
     fetchData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fechaInicio, fechaTermino]);
 
   const options = {
     scales: {
@@ -56,49 +165,90 @@ export default function LineCHartAfp() {
         position: "top",
       },
     },
-    animations: {
-      radius: {
-        duration: 400,
-        easing: "linear",
-        loop: (context) => context.active,
-      },
-    },
   };
 
   const data = {
-    labels: datos.map((item) => item.fecha),
+    labels: rangoFechas.map(
+      (fecha) =>
+        `${fecha.getDate()}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`
+    ),
     datasets: [
       {
-        label: "Cuprum",
-        data: datosCuprum
-          .filter((item) => item.fondo === "A")
-          .map((item) => item.valor),
+        label: "Fondo A",
+        data: Object.values(promedioValorPorDiaFondoA).map(
+          (item) => item.promedio
+        ),
         tension: 0.1,
         fill: false,
         borderColor: "rgb(119, 107, 255)",
         backgroundColor: "rgb(21, 0, 255)",
+        pointRadius: 0,
       },
       {
-        label: "Capital",
-        data: datosCapital
-          .filter((item) => item.fondo === "A")
-          .map((item) => item.valor),
+        label: "Fondo B",
+        data: Object.values(promedioValorPorDiaFondoB).map(
+          (item) => item.promedio
+        ),
         tension: 0.1,
         fill: false,
-        borderColor: "rgb(255, 163, 163)",
-        backgroundColor: "rgb(255, 0, 0)",
+        borderColor: "rgb(119, 107, 255)",
+        backgroundColor: "rgb(21, 0, 255)",
+        pointRadius: 0,
       },
       {
-        label: "Modelo",
-        data: datosModelo
-          .filter((item) => item.fondo === "A")
-          .map((item) => item.valor),
+        label: "Fondo C",
+        data: Object.values(promedioValorPorDiaFondoC).map(
+          (item) => item.promedio
+        ),
         tension: 0.1,
         fill: false,
-        borderColor: "rgb(3, 112, 12)",
-        backgroundColor: "rgb(0, 0, 0))",
+        borderColor: "rgb(119, 107, 255)",
+        backgroundColor: "rgb(21, 0, 255)",
+        pointRadius: 0,
+      },
+      {
+        label: "Fondo D",
+        data: Object.values(promedioValorPorDiaFondoD).map(
+          (item) => item.promedio
+        ),
+        tension: 0.1,
+        fill: false,
+        borderColor: "rgb(119, 107, 255)",
+        backgroundColor: "rgb(21, 0, 255)",
+        pointRadius: 0,
+      },
+      {
+        label: "Fondo E",
+        data: Object.values(promedioValorPorDiaFondoE).map(
+          (item) => item.promedio
+        ),
+        tension: 0.1,
+        fill: false,
+        borderColor: "rgb(119, 107, 255)",
+        backgroundColor: "rgb(21, 0, 255)",
+        pointRadius: 0,
       },
     ],
   };
-  return <Line data={data} options={options} />;
+  return (
+    <div>
+      <div>
+        <label>Seleccione fecha de inicio: </label>
+        <input
+          type="date"
+          value={fechaInicio.toISOString().split("T")[0]}
+          onChange={handleFechaInicio}
+        />
+      </div>
+      <div>
+        <label>Seleccione fecha termino: </label>
+        <input
+          type="date"
+          value={fechaTermino.toISOString().split("T")[0]}
+          onChange={handleFechaTermino}
+        />
+      </div>
+      <Line data={data} options={options} />
+    </div>
+  );
 }

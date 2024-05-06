@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./App.css";
 import BarChart from "./barChart";
-import BarChartDivisa from "./barChartDivisa";
 import LineChartAfp from "./lineChartAfp";
 
 function App() {
@@ -36,28 +35,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="accordion-item">
-          <h2 className="accordion-header">
-            <button
-              className="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#panelsStayOpen-collapseTwo"
-              aria-expanded="false"
-              aria-controls="panelsStayOpen-collapseTwo"
-            >
-              <h3 className="subTitle">Divisas peso Chileno</h3>
-            </button>
-          </h2>
-          <div
-            id="panelsStayOpen-collapseTwo"
-            className="accordion-collapse collapse"
-          >
-            <div className="accordion-body">
-              <BarChartDivisa />
-            </div>
-          </div>
-        </div>
+
         <div className="accordion-item">
           <h2 className="accordion-header">
             <button
@@ -68,7 +46,7 @@ function App() {
               aria-expanded="false"
               aria-controls="panelsStayOpen-collapseThree"
             >
-              <h3 className="subTitle">Valor Cuota Mayo</h3>
+              <h3 className="subTitle">Valor Promedio Fondos</h3>
             </button>
           </h2>
           <div
