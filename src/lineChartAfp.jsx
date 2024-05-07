@@ -44,7 +44,7 @@ export default function LineCHartAfp() {
     const selectedTermino = new Date(e.target.value);
     setFechaTermino(selectedTermino);
   };
-  console.log(`La fecha de termino es: ${fechaTermino}`);
+  //console.log(`La fecha de termino es: ${fechaTermino}`);
 
   //console.log(`Hoy es ${dia}/${mes}/${año}`);
 
@@ -68,7 +68,7 @@ export default function LineCHartAfp() {
     `${añoInicial}-${mesInicial - 1}-${diaInicial}`,
     `${añoFinal}-${mesFinal}-${diaFinal}`
   );
-  console.log("Estas son las fechas " + rangoFechas);
+  //console.log("Estas son las fechas " + rangoFechas);
 
   const fetchData = async () => {
     try {
